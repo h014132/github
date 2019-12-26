@@ -42,17 +42,14 @@ QWidget* Tohelpothers::initUI()
     LineEdit->setValidator(validator);
     connect(LineEdit,&QLineEdit::textChanged,this,&Tohelpothers::getLineEdit);
     Label = new  DLabel(Tohwidget);
-
-    Label->setText(tr("请在上方输入你想帮助的人提供给你的验证码，完成后点击连接开始协助对方"));
+    Label->setAlignment(Qt::AlignCenter);
     Label->setFixedHeight(70);
     QFont Font;
     Font.setPointSize(8);
     Label->setFont(Font);
-    //设置颜色
-    DPalette Paletteb;
-    Paletteb.setColor(QPalette::WindowText,Qt::red);
-    Label->setPalette(Paletteb);
+    Label->setEnabled(false);
     Label->setWordWrap(true);
+    Label->setText(tr("请在上方输入你想帮助的人提供给你的验证码，完成后点击连接开始协助对方"));
     PushButtons = new DPushButton(Tohwidget);
     PushButtons->setText(tr("取消"));
     PushButtons->setFixedSize(140,33);
@@ -103,12 +100,20 @@ QWidget *Tohelpothers::connectflase()
     connectf = new QWidget;
     Label = new DLabel(connectf);
     DPalette Paletteb;
-    Paletteb.setColor(QPalette::WindowText,Qt::green);
+    Paletteb.setColor(QPalette::WindowText,Qt::yellow);
     Label->setPalette(Paletteb);
     Label->setWordWrap(true);
+    QFont Font;
+    Font.setPointSize(18);
+    Label->setFont(Font);
     Label->setText(tr("连接失败"));
 
     labelk = new  DLabel(connectf);
+    QFont Fontf;
+    Fontf.setPointSize(8);
+    labelk->setFont(Fontf);
+    labelk->setAlignment(Qt::AlignCenter);
+    labelk->setEnabled(false);
     labelk->setText(tr("网络连接状态不是很稳定，点击重试按钮再次尝试连接"));
     PushButton = new QPushButton(connectf);
     PushButton->setText(tr("重试"));
@@ -131,12 +136,18 @@ QWidget *Tohelpothers::connecttrue()
     connectt = new  QWidget;
     Label = new DLabel(connectt);
     QFont Fontf;
-    Fontf.setPointSize(10);
+    Fontf.setPointSize(18);
     Label->setFont(Fontf);
     Label->setText(tr("你正在进行远程协助"));
 
     labelk = new  DLabel(connectt);
+    QFont Font;
+    Font.setPointSize(8);
+    labelk->setFont(Font);
+    labelk->setEnabled(false);
+    labelk->setAlignment(Qt::AlignCenter);
     labelk->setText(tr("当前已经有一个连接会话，如果您想建立新的连接，请先断开"));
+
     PushButton = new QPushButton(connectt);
     PushButton->setText(tr("断开"));
     connect(PushButton,&QPushButton::clicked,this,&Tohelpothers::mainDisconnect);
@@ -157,19 +168,19 @@ QWidget *Tohelpothers::connecttrue()
 
 void Tohelpothers::mainconnect()
 {
-    QString str2 = PushButtons->text();
-    if(str2 == "取消" ){
-         emit sendTomain();
-    }else if (str2 == "连接") {
-         askStackedWidget->setCurrentWidget(onnection);
-    }
-    Timer->start(5000);
+        QString str2 = PushButtons->text();
+        if(str2 == "取消" ){
+             emit sendTomain();
+        }else if (str2 == "连接") {
+             askStackedWidget->setCurrentWidget(onnection);
+        }
+        Timer->start(5000);
 }
 
 void Tohelpothers::getLineEdit()
 {
     PushButtons->setText("取消");
-    str1 = askfor->getnumber();
+   // str1 = askfor->getString();
     str  = LineEdit->text();
     if(LineEdit->text().count() == 6){
         PushButtons->setText("连接");
@@ -178,28 +189,41 @@ void Tohelpothers::getLineEdit()
 
 void Tohelpothers::mainycancel()
 {
+    if(Timer->isActive())
+        Timer->stop();
+    LineEdit->setText("");
     emit sendTomaincancel();
     askStackedWidget->setCurrentWidget(Tohwidget);
 }
 
 void Tohelpothers::connecttype()
 {
-    if(str == str1){
+     qDebug()<<"str"<<str<<"m_VarifyCode"<<m_VarifyCode;
+    if(str == m_VarifyCode){
+
         askStackedWidget->setCurrentWidget(connectt);
     }else {
         askStackedWidget->setCurrentWidget(connectf);
     }
-    qDebug() << str << str1;
+    qDebug() << str << m_VarifyCode;
 }
 
 void Tohelpothers::mainDisconnect()
 {
+    LineEdit->setText("");
     emit sendTodisconnect();
     askStackedWidget->setCurrentWidget(Tohwidget);
 }
 
 void Tohelpothers::newconnect()
 {
-     askStackedWidget->setCurrentWidget(onnection);
+    LineEdit->setText("");
+    askStackedWidget->setCurrentWidget(Tohwidget);
+}
+
+void Tohelpothers::getRandomNumber(QString str)
+{
+    qDebug()<<"mm"<<str;
+    m_VarifyCode = str;
 }
 

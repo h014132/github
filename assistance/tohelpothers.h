@@ -51,6 +51,8 @@ private:
     QString str1;
 public:
     QTimer *Timer;
+    QString m_VarifyCode;
+    void  getRandomNumber(QString str);
 
 };
 

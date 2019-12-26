@@ -4,6 +4,7 @@
 #include <DMainWindow>
 #include <DToolButton>
 #include <DLabel>
+#include <DTitlebar>
 
 #include <QStackedWidget>
 #include <QWidget>
@@ -19,7 +20,6 @@ class Mainpage : public DMainWindow
     Q_OBJECT
 public:
     explicit Mainpage(QWidget *parent = nullptr);
-
 signals:
 
 public slots:
@@ -31,6 +31,7 @@ public slots:
     void tohcancel();
     void tohTcancel();
     void tohTdisconnect();
+    void setMainTitle(const QString &leftsideicon,const QString &rightsideicon);
 private:
     Askforhelp *askForhelp;
     Tohelpothers *tohElpthers;
@@ -40,6 +41,12 @@ private:
     DLabel *AssisLabelTwo;
     DToolButton *AssisPushButtonOne;
     DToolButton *AssisPushButtonTwo;
+    DTitlebar *mainthis;
+    DWidget *MainTitle;
+    DLabel * LeftsideIcon;
+    DLabel * RightsideIcon;
+    QImage *image;
+
 };
 
 #endif // M_MIANWINDOW_H

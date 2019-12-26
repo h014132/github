@@ -11,6 +11,7 @@
 #include "askforhelp.h"
 
 #define NUM_FIXEA  70
+
 Askforhelp::Askforhelp(QWidget *parent) : QWidget(parent)
 {
     initUI();
@@ -29,9 +30,9 @@ Askforhelp::Askforhelp(QWidget *parent) : QWidget(parent)
     setLayout(mainlayout);
 }
 
-QString Askforhelp::getnumber()
+QString Askforhelp::getString()
 {
-    return str;
+    return nullptr;
 }
 
 QWidget* Askforhelp::initUI()
@@ -48,6 +49,9 @@ QWidget* Askforhelp::initUI()
 
 
     pushButton = new  DPushButton(askwidget);
+    DPalette palette(pushButton->palette());
+    palette.setBrush(DPalette::WindowText,QBrush(Qt::blue));
+    pushButton->setPalette(palette);
     pushButton->setText(tr("取消"));
     pushButton->setFixedSize(140,33);
     connect(pushButton,&DPushButton::clicked,this,&Askforhelp::sendtomaincancel);
@@ -67,30 +71,32 @@ QWidget* Askforhelp::Verification()
 {
     erification = new QWidget;
     LabelOnes = new DLabel(erification);
-    qsrand(QTime(0,0,0).secsTo(QTime::currentTime()));          //设置随机数种子
-    int rand = qrand() % (999999 - 100000)+100000; //产生十以内的随机数(0-9)
+
+    LabelOnes->setText("");
+
+  //  LabelOnes->setText(tr("%1").arg(rand));
+
+   // str = QString::number(rand);
     //设置字号
     QFont Fontf;
     Fontf.setPointSize(30);
     Fontf.setLetterSpacing(QFont::AbsoluteSpacing,18);
     LabelOnes->setFont(Fontf);
-    LabelOnes->setText(tr("%1").arg(rand));
-
-    str = QString::number(rand);
+//    qDebug()<<str;
 
     LabelOnes->setFixedHeight(NUM_FIXEA);
 
     LabelTwo = new DLabel(erification);
-    LabelTwo->setText(tr("要开始共享您的桌面，请将上面的验证码提供给协助您的人员，他们输入验证码后，您的共享会话会立即开始"));
+    LabelTwo->setText(tr("要开始共享您的桌面，"
+                         "请将上面的验证码提供给协助您的人员，"
+                         "他们输入验证码后，"
+                         "您的共享会话会立即开始"));
+    LabelTwo->setAlignment(Qt::AlignCenter);
     QFont Font;
     Font.setPointSize(8);
     LabelTwo->setFont(Font);
     LabelTwo->setWordWrap(true);
-    //设置颜色
-    DPalette Paletteb;
-    Paletteb.setColor(QPalette::WindowText,Qt::red);
-    LabelTwo->setPalette(Paletteb);
-    LabelTwo->setWordWrap(true);
+    LabelTwo->setEnabled(false);
     LabelTwo->setFixedHeight(NUM_FIXEA);
 
 
@@ -121,7 +127,13 @@ QWidget* Askforhelp::Copysuccess()
     LabelOne->setText(tr("成功复制到粘贴板"));
 
     LabelTwo = new  DLabel(opysuccess);
-    LabelTwo->setText(tr("正在等待连接，请稍后...\n连接成功后，此界面会自动隐藏到任务栏"));
+    QFont Font;
+    Font.setPointSize(8);
+    LabelTwo->setFont(Font);
+    LabelTwo->setEnabled(false);
+    LabelTwo->setAlignment(Qt::AlignCenter);
+    LabelTwo->setText(tr("正在等待连接，请稍后...\n"
+                         "连接成功后，此界面会自动隐藏到任务栏"));
 
 
     pushButton = new  DPushButton(opysuccess);
@@ -143,15 +155,20 @@ QWidget* Askforhelp::Copysuccess()
 
 void Askforhelp::generate()
 {
+    if(Timer->isActive())
+        Timer->stop();
+    m_valifyCodeStr= setRandomNumber();
+    LabelOnes->setText(m_valifyCodeStr);
+    qDebug()<<"**********88"<<m_valifyCodeStr;
     askStackedWidget->setCurrentWidget(erification);
 }
 
 void Askforhelp::copytrue()
 {
-
     QClipboard *clipboard = QApplication::clipboard();   //获取系统剪贴板指针
     QString originalText = LabelOnes->text();	     //获取剪贴板上文本信息
     clipboard->setText(originalText);
+    qDebug()<<"originalText"<<originalText;
     askStackedWidget->setCurrentWidget(opysuccess);
 }
 
@@ -163,8 +180,21 @@ void Askforhelp::sendmain()
 
 void Askforhelp::sendtomaincancel()
 {
+    if(Timer->isActive())
+         Timer->stop();
     emit sendtomain();
     askStackedWidget->setCurrentWidget(askwidget);
+}
+
+QString Askforhelp::setRandomNumber()
+{
+    qsrand(QTime(0,0,0).secsTo(QTime::currentTime()));          //设置随机数种子
+    return QString::number(qrand() % (999999 - 100000)+100000); //产生十以内的随机数(0-9)
+}
+
+QString Askforhelp::getValifyCode()
+{
+    return m_valifyCodeStr;
 }
 
 

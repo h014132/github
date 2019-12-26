@@ -4,6 +4,7 @@
 #include <QPixmap>
 #include <QDebug>
 #include <QAction>
+#include <QTime>
 
 #include "mainpage.h"
 
@@ -13,6 +14,8 @@
 
 Mainpage::Mainpage(QWidget *parent) : DMainWindow(parent)
 {
+    MainTitle = nullptr;
+    mainthis= this->titlebar();
     mainWidget = new QWidget;
     askForhelp = new Askforhelp;
     tohElpthers = new Tohelpothers;
@@ -33,10 +36,12 @@ Mainpage::Mainpage(QWidget *parent) : DMainWindow(parent)
     connect(tohElpthers,&Tohelpothers::sendTodisconnect,this,&Mainpage::tohTdisconnect);
 }
 
+
+
 void Mainpage::initUI()
 {
     AssisLabelOne = new DLabel(mainWidget);
-    QPixmap Pixmap("://assisa.jpg");
+    QPixmap Pixmap("://assisd.png");
     DPalette palettea(AssisLabelOne->palette());
     palettea.setBrush(DPalette::Background,QBrush(Pixmap));
     AssisLabelOne->setPalette(palettea);
@@ -55,13 +60,12 @@ void Mainpage::initUI()
     Font.setPointSize(8);
     AssisLabelTwo->setFont(Font);
 
-    //设置颜色
-//    DPalette Paletteb;
-//    Paletteb.setColor(QPalette::WindowText,Qt::red);
-//    AssisLabelTwo->setPalette(Paletteb);
     AssisLabelTwo->setWordWrap(true);
     AssisLabelTwo->setEnabled(false);
-    AssisLabelTwo->setText(tr("这是由deepin团队开发的远程协助应用，如果您在使用过程中遇到了困难，或者有人求助于你，请点击下方的我要求助或帮助别人."));
+    AssisLabelTwo->setText(tr("这是由deepin团队开发的远程协助应用，"
+                              "如果您在使用过程中遇到了困难，或者有人求助于你，"
+                              ""
+                              "请点击下方的我要求助或帮助别人."));
     AssisLabelTwo->setAlignment(Qt::AlignCenter);
 
     AssisPushButtonOne = new DToolButton(mainWidget);
@@ -99,21 +103,29 @@ void Mainpage::Forhelp()
 {
     mainStackedWidget->setCurrentWidget(askForhelp);
     askForhelp->Timer->start(2000);
+    setMainTitle("://assisb.svg", tr("我要求助"));
 }
 
 void Mainpage::helpothers()
 {
     mainStackedWidget->setCurrentWidget(tohElpthers);
+    qDebug()<<"askforhelp"<<askForhelp->getValifyCode();
+    tohElpthers->getRandomNumber(askForhelp->getValifyCode());
+  //  qDebug()<<"*****"<<askForhelp->setRandomNumber();
+    setMainTitle("://assisc.svg", "帮助别人");
 }
 
 void Mainpage::returnmain()
 {
     mainStackedWidget->setCurrentWidget(mainWidget);
+    setMainTitle(nullptr, "远程协助");
+
 }
 
 void Mainpage::askcancel()
 {
     mainStackedWidget->setCurrentWidget(mainWidget);
+
 }
 
 void Mainpage::tohcancel()
@@ -130,4 +142,29 @@ void Mainpage::tohTdisconnect()
 {
     mainStackedWidget->setCurrentWidget(mainWidget);
 }
+
+void Mainpage::setMainTitle(const QString &leftsideicon, const QString &rightsideicon)
+{
+    image = new QImage;
+    LeftsideIcon=new DLabel(this);
+    LeftsideIcon->setPixmap(QPixmap::fromImage(*image));
+    LeftsideIcon->setScaledContents(true);
+    LeftsideIcon->setFixedSize(18,18);
+
+    RightsideIcon=new DLabel(this);
+
+    QHBoxLayout* myLayout = new QHBoxLayout();
+    myLayout->addStretch(0);
+    myLayout->addWidget(LeftsideIcon,0,Qt::AlignCenter);
+    myLayout->addWidget(RightsideIcon,0,Qt::AlignCenter);
+
+    MainTitle= new DWidget(this);
+    MainTitle->setLayout(myLayout);
+    mainthis->setCustomWidget(MainTitle);
+
+    LeftsideIcon->setPixmap(QPixmap(leftsideicon));
+    RightsideIcon->setText(rightsideicon);
+}
+
+
 

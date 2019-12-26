@@ -7,6 +7,8 @@
 #include <QStackedWidget>
 #include <DSpinner>
 
+
+
 DWIDGET_USE_NAMESPACE
 
 class Askforhelp : public QWidget
@@ -14,7 +16,7 @@ class Askforhelp : public QWidget
     Q_OBJECT
 public:
     explicit Askforhelp(QWidget *parent = nullptr);
-    QString getnumber();
+    QString getString();
 
 signals:
     void sendsignalmain();
@@ -39,8 +41,14 @@ private:
     DPushButton *pushButton;
     DSpinner *spinner;
     QString str;
+    int rand;
+
+private:
+    QString m_valifyCodeStr;
+    QString setRandomNumber();
 public:
     QTimer *Timer;
+    QString getValifyCode();
 
 };
 
