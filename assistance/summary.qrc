@@ -1,0 +1,7 @@
+<RCC>
+    <qresource prefix="/">
+        <file>assisa.jpg</file>
+        <file>assisb.svg</file>
+        <file>assisc.svg</file>
+    </qresource>
+</RCC>
